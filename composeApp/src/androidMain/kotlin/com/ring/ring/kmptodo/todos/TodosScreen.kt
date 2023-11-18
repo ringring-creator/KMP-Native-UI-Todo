@@ -18,6 +18,8 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.ring.ring.kmptodo.R
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 data class TodosUiState(
     val todos: List<TodosItemUiState>
@@ -38,6 +41,12 @@ data class TodosItemUiState(
     val setDone: (Boolean) -> Unit,
     val deadline: String,
 )
+
+@Composable
+fun TodosScreen(viewModel: TodosViewModel = viewModel()) {
+    val todosUiState by viewModel.todosUiState.collectAsState()
+    TodosScreen(state = todosUiState)
+}
 
 @Composable
 fun TodosScreen(state: TodosUiState) {
