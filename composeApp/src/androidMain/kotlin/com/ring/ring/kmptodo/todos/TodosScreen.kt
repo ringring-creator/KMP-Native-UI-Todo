@@ -26,13 +26,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.ring.ring.kmptodo.R
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ring.ring.kmptodo.R
 
 data class TodosUiState(
     val todos: List<TodosItemUiState>
 )
-
 
 data class TodosItemUiState(
     val id: Long,

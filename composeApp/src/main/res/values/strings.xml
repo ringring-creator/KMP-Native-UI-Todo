@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="todos_screen_title">Todos</string>
+    <string name="edit_todo_screen_title">Add / Edit Todo</string>
+    <string name="title">title</string>
+    <string name="description">description</string>
 </resources>
