@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.sqlDelight)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.kapt)
 }
 
 kotlin {
@@ -14,7 +17,7 @@ kotlin {
             }
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -25,22 +28,35 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
-        androidMain.dependencies {
-            implementation(libs.compose.ui)
-            implementation(libs.compose.navigation)
-            implementation(libs.compose.ui.tooling.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.lifecycle.viewmodel.compose)
-        }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
+            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.sqlDelight.common)
+        }
+        androidMain.dependencies {
+            implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.navigation)
+            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.sqlDelight.android)
+            implementation(libs.hilt.android.core)
+            implementation(libs.androidx.hilt.navigation.compose)
+            configurations.getByName("kapt").dependencies.add(
+                libs.hilt.compiler.get()
+            )
+        }
+
+        iosMain.dependencies {
+            implementation(libs.sqlDelight.ios)
         }
     }
 }
@@ -80,7 +96,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    dependencies {
-        debugImplementation(libs.compose.ui.tooling)
+}
+
+sqldelight {
+    databases {
+        create("LocalDb") {
+            packageName.set("data.local.db")
+            srcDirs("src/commonMain/kotlin")
+        }
     }
 }

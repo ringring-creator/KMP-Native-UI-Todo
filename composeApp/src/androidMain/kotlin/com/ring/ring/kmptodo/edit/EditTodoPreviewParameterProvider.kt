@@ -3,14 +3,14 @@ package com.ring.ring.kmptodo.edit
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 
 
-class EditTodoPreviewParameterProvider : PreviewParameterProvider<EditTodoStateHolder.UiState> {
-    override val values: Sequence<EditTodoStateHolder.UiState>
+class EditTodoPreviewParameterProvider : PreviewParameterProvider<EditTodoUiState> {
+    override val values: Sequence<EditTodoUiState>
         get() = sequenceOf(
-            EditTodoStateHolder.UiState(
+            EditTodoUiState(
                 title = "implement UI",
                 description = "implement UI".repeat(10),
                 done = false,
-                deadline = EditTodoViewModel.Deadline(
+                deadline = EditTodoUiState.Deadline(
                     initialYear = 2023,
                     initialMonth = 1,
                     initialDay = 1,

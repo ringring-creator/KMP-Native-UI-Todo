@@ -27,9 +27,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.MutableCreationExtras
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ring.ring.kmptodo.R
+
+data class EditTodoUiState(
+    val title: String,
+    val description: String,
+    val done: Boolean,
+    val deadline: Deadline,
+    val showDatePicker: Boolean,
+) {
+    data class Deadline(
+        val initialYear: Int = 0,
+        val initialMonth: Int = 0,
+        val initialDay: Int = 0,
+    ) {
+        override fun toString(): String = "${initialYear}-${initialMonth}-${initialDay}"
+    }
+}
 
 interface EditTodoChangeState {
     fun setTitle(title: String) {}
@@ -43,16 +58,8 @@ interface EditTodoChangeState {
 data class EditTodoStateHolder(
     val viewModel: EditTodoViewModel,
 ) : EditTodoChangeState by viewModel {
-    data class UiState(
-        val title: String,
-        val description: String,
-        val done: Boolean,
-        val deadline: EditTodoViewModel.Deadline,
-        val showDatePicker: Boolean,
-    )
-
-    val uiState: UiState
-        @Composable get() = UiState(
+    val editTodoUiState: EditTodoUiState
+        @Composable get() = EditTodoUiState(
             viewModel.title.collectAsState().value,
             viewModel.description.collectAsState().value,
             viewModel.done.collectAsState().value,
@@ -64,12 +71,7 @@ data class EditTodoStateHolder(
 @Composable
 fun rememberEditTodoUiState(
     id: Long? = null,
-    viewModel: EditTodoViewModel = viewModel(
-        factory = EditTodoViewModel.Factory,
-        extras = MutableCreationExtras().apply {
-            set(EditTodoViewModel.ID_Key, id)
-        }
-    ),
+    viewModel: EditTodoViewModel = hiltViewModel(),
 ) = remember {
     EditTodoStateHolder(viewModel)
 }
@@ -77,14 +79,16 @@ fun rememberEditTodoUiState(
 @Composable
 fun EditTodoScreen(
     id: Long? = null,
-    stateHolder: EditTodoStateHolder = rememberEditTodoUiState(id = id)
+    stateHolder: EditTodoStateHolder = rememberEditTodoUiState(
+        id = id,
+    )
 ) {
-    EditTodoScreen(stateHolder.uiState, stateHolder)
+    EditTodoScreen(stateHolder.editTodoUiState, stateHolder)
 }
 
 @Composable
 fun EditTodoScreen(
-    uiState: EditTodoStateHolder.UiState,
+    editTodoUiState: EditTodoUiState,
     changeState: EditTodoChangeState,
 ) {
     Scaffold(
@@ -96,7 +100,7 @@ fun EditTodoScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it),
-            state = uiState,
+            state = editTodoUiState,
             changeState = changeState,
         )
     }
@@ -105,7 +109,7 @@ fun EditTodoScreen(
 @Composable
 fun EditTodoContent(
     modifier: Modifier,
-    state: EditTodoStateHolder.UiState,
+    state: EditTodoUiState,
     changeState: EditTodoChangeState,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -182,7 +186,7 @@ fun EditTodoContent(
 
 @Composable
 private fun DeadlineDatePicker(
-    deadline: EditTodoViewModel.Deadline,
+    deadline: EditTodoUiState.Deadline,
     showDatePicker: Boolean,
     setDate: (Int, Int, Int) -> Unit
 ) {
@@ -198,10 +202,10 @@ private fun DeadlineDatePicker(
 @Preview(showSystemUi = true)
 @Composable
 fun EditTodoScreenPreview(
-    @PreviewParameter(EditTodoPreviewParameterProvider::class) uiState: EditTodoStateHolder.UiState
+    @PreviewParameter(EditTodoPreviewParameterProvider::class) editTodoUiState: EditTodoUiState
 ) {
     EditTodoScreen(
-        uiState = uiState,
+        editTodoUiState = editTodoUiState,
         changeState = object : EditTodoChangeState {},
     )
 }
