@@ -13,7 +13,7 @@ import javax.inject.Inject
 class EditTodoViewModel @Inject constructor(
     private val todoRepository: TodoRepository,
     @IoDispatcher private val dispatcher: CoroutineDispatcher,
-) : ViewModel(), EditTodoChangeState {
+) : ViewModel(), EditTodoStateUpdater {
     private val _title = MutableStateFlow("")
     val title = _title.asStateFlow()
     private val _description = MutableStateFlow("")

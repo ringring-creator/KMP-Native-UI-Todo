@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
-            TodoApp(navController)
+            TodoNavGraph(navController)
         }
     }
 }

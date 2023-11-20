@@ -11,6 +11,13 @@ class TodoDataSource(private val queries: TodoQueries) {
         convert(it)
     }
 
+    fun updateDone(id: Long, done: Boolean) {
+        queries.updateDone(
+            done = done,
+            id = id,
+        )
+    }
+
     fun update(todo: Todo) {
         val id = todo.id ?: return
         queries.update(

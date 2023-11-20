@@ -1,4 +1,3 @@
-import data.Todo;
 import kotlin.Boolean;
 import kotlinx.datetime.LocalDate;
 
@@ -26,6 +25,11 @@ SET title = :title,
     description = :description,
     done = :done,
     deadline = :deadline
+WHERE id = :id;
+
+updateDone:
+UPDATE TodoTable
+SET done = :done
 WHERE id = :id;
 
 delete:

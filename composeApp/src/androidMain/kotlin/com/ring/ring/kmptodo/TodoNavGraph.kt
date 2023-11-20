@@ -10,16 +10,19 @@ import com.ring.ring.kmptodo.edit.EditTodoScreen
 import com.ring.ring.kmptodo.todos.TodosScreen
 
 @Composable
-fun TodoApp(navController: NavHostController) {
+fun TodoNavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screen.Todos.route) {
         composable(Screen.Todos.route) {
             TodosScreen { navController.navigate(Screen.EditTodo.createRoute(it)) }
         }
         composable(
             Screen.EditTodo.route,
-            arguments = listOf(navArgument("id") { type = NavType.LongType })
+            arguments = listOf(navArgument("id") {
+                type = NavType.StringType
+                nullable = true
+            })
         ) { backStackEntry ->
-            EditTodoScreen(id = backStackEntry.arguments?.getLong("id"))
+            EditTodoScreen(id = backStackEntry.arguments?.getString("id")?.toLongOrNull())
         }
     }
 }

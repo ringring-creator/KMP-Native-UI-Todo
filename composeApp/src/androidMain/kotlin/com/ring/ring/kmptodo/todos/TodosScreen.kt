@@ -1,6 +1,7 @@
 package com.ring.ring.kmptodo.todos
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,11 +13,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,11 +37,14 @@ data class TodosUiState(
     val todos: List<TodosItemUiState>
 )
 
+interface TodosStateUpdater {
+    fun setDone(id: Long, done: Boolean) {}
+}
+
 data class TodosItemUiState(
     val id: Long,
     val title: String,
     val done: Boolean,
-    val setDone: (Boolean) -> Unit,
     val deadline: String,
 )
 
@@ -49,40 +55,60 @@ fun TodosScreen(
 ) {
     val todosUiState by viewModel.todosUiState.collectAsState()
     TodosScreen(
-        state = todosUiState,
+        uiState = todosUiState,
+        stateUpdater = viewModel,
         onNavigateToEditTodo = onNavigateToEditTodo
     )
 }
 
 @Composable
 fun TodosScreen(
-    state: TodosUiState,
-    onNavigateToEditTodo: (Long?) -> Unit
+    uiState: TodosUiState,
+    stateUpdater: TodosStateUpdater,
+    onNavigateToEditTodo: (Long?) -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(stringResource(id = R.string.todos_screen_title)) })
         }
     ) {
-        TodosContent(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it),
-            state = state,
-            onNavigateToEditTodo = onNavigateToEditTodo,
-        )
+                .padding(it)
+        ) {
+            TodosContent(
+                todos = uiState.todos,
+                onNavigateToEditTodo = onNavigateToEditTodo,
+                setDone = stateUpdater::setDone,
+            )
+            FloatingActionButton(
+                onClick = { onNavigateToEditTodo(null) },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+            ) {
+                Icon(
+                    Icons.Filled.Create,
+                    contentDescription = "create",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
     }
 }
 
 @Composable
 private fun TodosContent(
-    modifier: Modifier,
-    state: TodosUiState,
-    onNavigateToEditTodo: (Long?) -> Unit
+    modifier: Modifier = Modifier,
+    todos: List<TodosItemUiState>,
+    onNavigateToEditTodo: (Long?) -> Unit,
+    setDone: (id: Long, done: Boolean) -> Unit,
 ) {
     LazyColumn(modifier) {
-        items(state.todos) {
-            TodosItem(it, onNavigateToEditTodo)
+        items(todos) { item ->
+            TodosItem(item, onNavigateToEditTodo) {
+                setDone(item.id, it)
+            }
         }
     }
 }
@@ -90,7 +116,8 @@ private fun TodosContent(
 @Composable
 fun TodosItem(
     item: TodosItemUiState,
-    onNavigateToEditTodo: (Long?) -> Unit
+    onNavigateToEditTodo: (Long?) -> Unit,
+    setDone: (done: Boolean) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -109,7 +136,7 @@ fun TodosItem(
             ) {
                 Checkbox(
                     checked = item.done,
-                    onCheckedChange = item.setDone,
+                    onCheckedChange = setDone,
                 )
                 Text(
                     item.title,
@@ -135,7 +162,10 @@ fun TodosItem(
 @Preview(showSystemUi = true)
 @Composable
 fun TodosScreenPreview(
-    @PreviewParameter(TodosPreviewParameterProvider::class) state: TodosUiState
+    @PreviewParameter(TodosPreviewParameterProvider::class) uiState: TodosUiState
 ) {
-    TodosScreen(state = state, onNavigateToEditTodo = {})
+    TodosScreen(
+        uiState = uiState,
+        stateUpdater = object : TodosStateUpdater {}
+    ) {}
 }

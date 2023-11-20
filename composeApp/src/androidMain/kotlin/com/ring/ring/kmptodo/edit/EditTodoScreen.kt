@@ -46,7 +46,7 @@ data class EditTodoUiState(
     }
 }
 
-interface EditTodoChangeState {
+interface EditTodoStateUpdater {
     fun setTitle(title: String) {}
     fun setDescription(description: String) {}
     fun setDone(done: Boolean) {}
@@ -57,7 +57,7 @@ interface EditTodoChangeState {
 
 data class EditTodoStateHolder(
     val viewModel: EditTodoViewModel,
-) : EditTodoChangeState by viewModel {
+) : EditTodoStateUpdater by viewModel {
     val editTodoUiState: EditTodoUiState
         @Composable get() = EditTodoUiState(
             viewModel.title.collectAsState().value,
@@ -89,7 +89,7 @@ fun EditTodoScreen(
 @Composable
 fun EditTodoScreen(
     editTodoUiState: EditTodoUiState,
-    changeState: EditTodoChangeState,
+    changeState: EditTodoStateUpdater,
 ) {
     Scaffold(
         topBar = {
@@ -110,7 +110,7 @@ fun EditTodoScreen(
 fun EditTodoContent(
     modifier: Modifier,
     state: EditTodoUiState,
-    changeState: EditTodoChangeState,
+    changeState: EditTodoStateUpdater,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = modifier.padding(8.dp)) {
@@ -206,6 +206,6 @@ fun EditTodoScreenPreview(
 ) {
     EditTodoScreen(
         editTodoUiState = editTodoUiState,
-        changeState = object : EditTodoChangeState {},
+        changeState = object : EditTodoStateUpdater {},
     )
 }
