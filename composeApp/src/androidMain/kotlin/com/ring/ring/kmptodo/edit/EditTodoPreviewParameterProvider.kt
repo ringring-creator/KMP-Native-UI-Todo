@@ -1,6 +1,7 @@
 package com.ring.ring.kmptodo.edit
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import kotlinx.coroutines.flow.flowOf
 
 
 class EditTodoPreviewParameterProvider : PreviewParameterProvider<EditTodoUiState> {
@@ -11,11 +12,11 @@ class EditTodoPreviewParameterProvider : PreviewParameterProvider<EditTodoUiStat
                 description = "implement UI".repeat(10),
                 done = false,
                 deadline = EditTodoUiState.Deadline(
-                    initialYear = 2023,
-                    initialMonth = 1,
-                    initialDay = 1,
+                    year = 2023,
+                    month = 1,
+                    day = 1,
                 ),
-                showDatePicker = false,
+                showDatePickerEvent = flowOf(false),
             ),
         )
 }

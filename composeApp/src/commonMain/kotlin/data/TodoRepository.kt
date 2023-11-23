@@ -50,12 +50,12 @@ class TodoRepository(
         todoDataSource.get(id = id)
     }
 
-    suspend fun updateDone(id: Long, done: Boolean) = withContext(Dispatchers.IO) {
-        todoDataSource.updateDone(id, done)
+    suspend fun save(todo: Todo): Long? = withContext(Dispatchers.IO) {
+        todoDataSource.upsert(todo)
     }
 
-    suspend fun update(todo: Todo) = withContext(Dispatchers.IO) {
-        todoDataSource.update(todo = todo)
+    suspend fun updateDone(id: Long, done: Boolean) = withContext(Dispatchers.IO) {
+        todoDataSource.updateDone(id, done)
     }
 
     suspend fun delete(id: Long) = withContext(Dispatchers.IO) {

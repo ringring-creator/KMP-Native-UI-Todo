@@ -22,14 +22,19 @@ fun TodoNavGraph(navController: NavHostController) {
                 nullable = true
             })
         ) { backStackEntry ->
-            EditTodoScreen(id = backStackEntry.arguments?.getString("id")?.toLongOrNull())
+            EditTodoScreen()
         }
     }
 }
 
 sealed class Screen(val route: String) {
     data object Todos : Screen("todos")
-    data object EditTodo : Screen("todo/{id}") {
+    data object EditTodo : Screen("todo/{${EDIT_ID_ARGS}}") {
         fun createRoute(id: Long?) = "todo/$id"
+    }
+
+    companion object {
+        const val EDIT_ID_ARGS = "id"
+
     }
 }

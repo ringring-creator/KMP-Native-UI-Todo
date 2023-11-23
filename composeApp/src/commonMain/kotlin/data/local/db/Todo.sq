@@ -19,6 +19,9 @@ insert:
 INSERT OR IGNORE INTO TodoTable(title, description, done, deadline)
 VALUES(?,?,?,?);
 
+lastInsertId:
+SELECT id FROM TodoTable WHERE rowid = last_insert_rowid();
+
 update:
 UPDATE TodoTable
 SET title = :title,

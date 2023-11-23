@@ -42,9 +42,12 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
+            implementation(project.dependencies.platform("androidx.compose:compose-bom:2023.10.01"))
             implementation(libs.compose.ui)
-            implementation(libs.compose.navigation)
+            implementation(libs.compose.ui.tooling)
             implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.compose.navigation)
+            implementation(libs.compose.foundation)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.sqlDelight.android)

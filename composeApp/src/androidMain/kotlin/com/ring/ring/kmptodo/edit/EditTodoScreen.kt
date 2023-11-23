@@ -1,5 +1,6 @@
 package com.ring.ring.kmptodo.edit
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,20 +30,36 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ring.ring.kmptodo.R
+import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 data class EditTodoUiState(
     val title: String,
     val description: String,
     val done: Boolean,
     val deadline: Deadline,
-    val showDatePicker: Boolean,
+    val showDatePickerEvent: Flow<Boolean>,
 ) {
     data class Deadline(
-        val initialYear: Int = 0,
-        val initialMonth: Int = 0,
-        val initialDay: Int = 0,
+        val year: Int,
+        val month: Int,
+        val day: Int,
     ) {
-        override fun toString(): String = "${initialYear}-${initialMonth}-${initialDay}"
+        companion object {
+            fun createCurrentDate(): Deadline {
+                val currentDate =
+                    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+                return Deadline(
+                    year = currentDate.year,
+                    month = currentDate.monthNumber,
+                    day = currentDate.dayOfMonth,
+                )
+            }
+        }
+
+        override fun toString(): String = "${year}-${month}-${day}"
     }
 }
 
@@ -50,7 +67,8 @@ interface EditTodoStateUpdater {
     fun setTitle(title: String) {}
     fun setDescription(description: String) {}
     fun setDone(done: Boolean) {}
-    fun setDate(year: Int, month: Int, day: Int) {}
+    fun setDeadline(year: Int, month: Int, day: Int) {}
+    fun showDatePicker() {}
     fun save() {}
     fun delete() {}
 }
@@ -64,13 +82,12 @@ data class EditTodoStateHolder(
             viewModel.description.collectAsState().value,
             viewModel.done.collectAsState().value,
             viewModel.deadline.collectAsState().value,
-            viewModel.showDatePicker.collectAsState().value,
+            viewModel.showDatePickerEvent,
         )
 }
 
 @Composable
 fun rememberEditTodoUiState(
-    id: Long? = null,
     viewModel: EditTodoViewModel = hiltViewModel(),
 ) = remember {
     EditTodoStateHolder(viewModel)
@@ -78,10 +95,7 @@ fun rememberEditTodoUiState(
 
 @Composable
 fun EditTodoScreen(
-    id: Long? = null,
-    stateHolder: EditTodoStateHolder = rememberEditTodoUiState(
-        id = id,
-    )
+    stateHolder: EditTodoStateHolder = rememberEditTodoUiState()
 ) {
     EditTodoScreen(stateHolder.editTodoUiState, stateHolder)
 }
@@ -89,7 +103,7 @@ fun EditTodoScreen(
 @Composable
 fun EditTodoScreen(
     editTodoUiState: EditTodoUiState,
-    changeState: EditTodoStateUpdater,
+    stateUpdater: EditTodoStateUpdater,
 ) {
     Scaffold(
         topBar = {
@@ -101,7 +115,7 @@ fun EditTodoScreen(
                 .fillMaxSize()
                 .padding(it),
             state = editTodoUiState,
-            changeState = changeState,
+            stateUpdater = stateUpdater,
         )
     }
 }
@@ -110,7 +124,7 @@ fun EditTodoScreen(
 fun EditTodoContent(
     modifier: Modifier,
     state: EditTodoUiState,
-    changeState: EditTodoStateUpdater,
+    stateUpdater: EditTodoStateUpdater,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = modifier.padding(8.dp)) {
@@ -120,11 +134,11 @@ fun EditTodoContent(
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Checkbox(checked = state.done, onCheckedChange = changeState::setDone)
+                Checkbox(checked = state.done, onCheckedChange = stateUpdater::setDone)
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = state.title,
-                    onValueChange = changeState::setTitle,
+                    onValueChange = stateUpdater::setTitle,
                     label = { Text(stringResource(id = R.string.title)) }
                 )
             }
@@ -134,13 +148,14 @@ fun EditTodoContent(
                     .fillMaxWidth()
                     .padding(8.dp),
                 value = state.description,
-                onValueChange = changeState::setDescription,
+                onValueChange = stateUpdater::setDescription,
                 label = { Text(stringResource(id = R.string.description)) }
             )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
+                    .clickable { stateUpdater.showDatePicker() }
             ) {
                 Icon(
                     Icons.Filled.DateRange,
@@ -156,7 +171,7 @@ fun EditTodoContent(
                 .align(Alignment.BottomEnd)
         ) {
             FloatingActionButton(
-                onClick = changeState::save,
+                onClick = stateUpdater::save,
                 modifier = Modifier.padding(8.dp)
             ) {
                 Icon(
@@ -166,7 +181,7 @@ fun EditTodoContent(
                 )
             }
             FloatingActionButton(
-                onClick = changeState::delete,
+                onClick = stateUpdater::delete,
                 modifier = Modifier.padding(8.dp)
             ) {
                 Icon(
@@ -178,8 +193,8 @@ fun EditTodoContent(
         }
         DeadlineDatePicker(
             state.deadline,
-            state.showDatePicker,
-            changeState::setDate,
+            state.showDatePickerEvent,
+            stateUpdater::setDeadline,
         )
     }
 }
@@ -187,15 +202,15 @@ fun EditTodoContent(
 @Composable
 private fun DeadlineDatePicker(
     deadline: EditTodoUiState.Deadline,
-    showDatePicker: Boolean,
+    showDatePickerEvent: Flow<Boolean>,
     setDate: (Int, Int, Int) -> Unit
 ) {
     DatePicker(
-        deadline.initialYear,
-        deadline.initialMonth,
-        deadline.initialDay,
+        deadline.year,
+        deadline.month,
+        deadline.day,
         setDate,
-        showDatePicker,
+        showDatePickerEvent,
     )
 }
 
@@ -206,6 +221,6 @@ fun EditTodoScreenPreview(
 ) {
     EditTodoScreen(
         editTodoUiState = editTodoUiState,
-        changeState = object : EditTodoStateUpdater {},
+        stateUpdater = object : EditTodoStateUpdater {},
     )
 }

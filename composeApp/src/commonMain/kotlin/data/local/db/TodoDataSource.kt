@@ -11,6 +11,14 @@ class TodoDataSource(private val queries: TodoQueries) {
         convert(it)
     }
 
+    fun upsert(todo: Todo): Long? {
+        return if (todo.id == null) {
+            insert(todo = todo)
+        } else {
+            update(todo = todo)
+        }
+    }
+
     fun updateDone(id: Long, done: Boolean) {
         queries.updateDone(
             done = done,
@@ -18,8 +26,21 @@ class TodoDataSource(private val queries: TodoQueries) {
         )
     }
 
-    fun update(todo: Todo) {
-        val id = todo.id ?: return
+    fun delete(id: Long) = queries.delete(id)
+
+    private fun insert(todo: Todo): Long {
+        queries.insert(
+            title = todo.title,
+            description = todo.description,
+            done = todo.done,
+            deadline = todo.deadline,
+        )
+        return queries.lastInsertId().executeAsOne()
+    }
+
+    private fun update(todo: Todo): Long? {
+        val id = todo.id ?: return null
+
         queries.update(
             id = id,
             title = todo.title,
@@ -27,9 +48,8 @@ class TodoDataSource(private val queries: TodoQueries) {
             done = todo.done,
             deadline = todo.deadline,
         )
+        return id
     }
-
-    fun delete(id: Long) = queries.delete(id)
 
     private fun convert(todoTable: TodoTable) = Todo(
         id = todoTable.id,
