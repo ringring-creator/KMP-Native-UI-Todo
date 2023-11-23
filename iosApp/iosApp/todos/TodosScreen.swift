@@ -2,51 +2,6 @@ import Foundation
 import ComposeApp
 import SwiftUI
 
-extension Todo {
-    func toTodosItemUiState() -> TodosItemUiState {
-        return TodosItemUiState(
-            id: id?.int64Value,
-            title: title,
-            done: done,
-            deadline: deadline.toString()
-        )
-    }
-}
-
-extension Kotlinx_datetimeLocalDate {
-    func toString() -> String {
-        return "\(year)-\(monthNumber)-\(dayOfMonth)"
-    }
-}
-
-class TodosViewModel: ObservableObject {
-    @Published var uiState = TodosUiState(todos: [])
-    private let todoRepository:TodoRepository
-
-    init(
-        uiState: TodosUiState = TodosUiState(todos: []),
-        todoRepository:TodoRepository = DataModules.Factory().createTodoRepository()
-    ) {
-        self.uiState = uiState
-        self.todoRepository = todoRepository
-    }
-    
-    func refresh() {
-        Task {
-            do {
-                let todos = try await todoRepository.list()
-                uiState = TodosUiState(
-                    todos: todos.map { todo in
-                        todo.toTodosItemUiState()
-                    }
-                )
-            } catch {
-                print("fail to todoRepository.list")
-            }
-        }
-    }
-}
-
 struct TodosUiState {
     var todos: [TodosItemUiState]
 }
@@ -77,10 +32,9 @@ struct TodosScreen: View {
     }
 }
 
-struct TodosItem: View {
+private struct TodosItem: View {
     @State var todo: TodosItemUiState
 
-    
     var body: some View{
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 5) {
