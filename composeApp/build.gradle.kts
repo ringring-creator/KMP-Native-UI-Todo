@@ -50,6 +50,7 @@ kotlin {
             implementation(libs.compose.foundation)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.sqlDelight.android)
             implementation(libs.hilt.android.core)
             implementation(libs.androidx.hilt.navigation.compose)

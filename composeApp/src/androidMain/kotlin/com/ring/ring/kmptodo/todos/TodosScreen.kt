@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ring.ring.kmptodo.R
 
 data class TodosUiState(
@@ -53,7 +54,8 @@ fun TodosScreen(
     viewModel: TodosViewModel = hiltViewModel(),
     onNavigateToEditTodo: (Long?) -> Unit
 ) {
-    val todosUiState by viewModel.todosUiState.collectAsState()
+    val todosUiState by viewModel.todosUiState.collectAsStateWithLifecycle()
+
     TodosScreen(
         uiState = todosUiState,
         stateUpdater = viewModel,
