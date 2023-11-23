@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.sqlDelight)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kapt)
+    alias(libs.plugins.skie)
 }
 
 kotlin {
@@ -25,7 +26,6 @@ kotlin {
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
-            isStatic = true
         }
     }
 
@@ -39,6 +39,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.sqlDelight.common)
+
         }
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)

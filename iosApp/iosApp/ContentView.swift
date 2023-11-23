@@ -12,8 +12,13 @@ struct ComposeView: UIViewControllerRepresentable {
 
 struct ContentView: View {
     var body: some View {
-        ComposeView()
-                .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
+        TodosScreen(viewModel: TodosViewModel(uiState:TodosUiState(todos: [
+            TodosItemUiState(id: 1, title: "Todo 1", done: false, deadline: "2023-11-25"),
+            TodosItemUiState(id: 2, title: "Todo 2", done: true, deadline: "2023-11-26")
+        ]
+    )))
+//        ComposeView()
+//                .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
     }
 }
 
