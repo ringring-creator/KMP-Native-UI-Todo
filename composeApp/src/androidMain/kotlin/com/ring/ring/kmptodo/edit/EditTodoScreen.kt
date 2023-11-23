@@ -16,12 +16,13 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -71,33 +72,39 @@ interface EditTodoStateUpdater {
     fun showDatePicker() {}
     fun save() {}
     fun delete() {}
-}
-
-data class EditTodoStateHolder(
-    val viewModel: EditTodoViewModel,
-) : EditTodoStateUpdater by viewModel {
-    val editTodoUiState: EditTodoUiState
-        @Composable get() = EditTodoUiState(
-            viewModel.title.collectAsState().value,
-            viewModel.description.collectAsState().value,
-            viewModel.done.collectAsState().value,
-            viewModel.deadline.collectAsState().value,
-            viewModel.showDatePickerEvent,
-        )
+    fun onBack() {}
 }
 
 @Composable
 fun rememberEditTodoUiState(
-    viewModel: EditTodoViewModel = hiltViewModel(),
-) = remember {
-    EditTodoStateHolder(viewModel)
+    viewModel: EditTodoViewModel,
+    popBackStack: () -> Boolean,
+): EditTodoUiState {
+    LaunchedEffect(Unit) {
+        viewModel.backEvent.collect {
+            popBackStack()
+        }
+    }
+
+    return EditTodoUiState(
+        viewModel.title.collectAsState().value,
+        viewModel.description.collectAsState().value,
+        viewModel.done.collectAsState().value,
+        viewModel.deadline.collectAsState().value,
+        viewModel.showDatePickerEvent,
+    )
 }
 
 @Composable
 fun EditTodoScreen(
-    stateHolder: EditTodoStateHolder = rememberEditTodoUiState()
+    popBackStack: () -> Boolean,
+    viewModel: EditTodoViewModel = hiltViewModel(),
+    uiState: EditTodoUiState = rememberEditTodoUiState(
+        popBackStack = popBackStack,
+        viewModel = viewModel
+    ),
 ) {
-    EditTodoScreen(stateHolder.editTodoUiState, stateHolder)
+    EditTodoScreen(uiState, viewModel)
 }
 
 @Composable
@@ -107,14 +114,23 @@ fun EditTodoScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(stringResource(id = R.string.edit_todo_screen_title)) })
+            TopAppBar(
+                title = { Text(stringResource(id = R.string.edit_todo_screen_title)) },
+                navigationIcon = {
+                    Icon(
+                        Icons.Filled.ArrowBack,
+                        contentDescription = null,
+                        modifier = Modifier.clickable { stateUpdater.onBack() }
+                    )
+                }
+            )
         }
     ) {
         EditTodoContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it),
-            state = editTodoUiState,
+            uiState = editTodoUiState,
             stateUpdater = stateUpdater,
         )
     }
@@ -123,7 +139,7 @@ fun EditTodoScreen(
 @Composable
 fun EditTodoContent(
     modifier: Modifier,
-    state: EditTodoUiState,
+    uiState: EditTodoUiState,
     stateUpdater: EditTodoStateUpdater,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -134,10 +150,10 @@ fun EditTodoContent(
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Checkbox(checked = state.done, onCheckedChange = stateUpdater::setDone)
+                Checkbox(checked = uiState.done, onCheckedChange = stateUpdater::setDone)
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = state.title,
+                    value = uiState.title,
                     onValueChange = stateUpdater::setTitle,
                     label = { Text(stringResource(id = R.string.title)) }
                 )
@@ -147,7 +163,7 @@ fun EditTodoContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                value = state.description,
+                value = uiState.description,
                 onValueChange = stateUpdater::setDescription,
                 label = { Text(stringResource(id = R.string.description)) }
             )
@@ -162,7 +178,7 @@ fun EditTodoContent(
                     contentDescription = "dateRange",
                     modifier = Modifier.size(24.dp)
                 )
-                Text(state.deadline.toString())
+                Text(uiState.deadline.toString())
             }
         }
         Row(
@@ -192,8 +208,8 @@ fun EditTodoContent(
             }
         }
         DeadlineDatePicker(
-            state.deadline,
-            state.showDatePickerEvent,
+            uiState.deadline,
+            uiState.showDatePickerEvent,
             stateUpdater::setDeadline,
         )
     }

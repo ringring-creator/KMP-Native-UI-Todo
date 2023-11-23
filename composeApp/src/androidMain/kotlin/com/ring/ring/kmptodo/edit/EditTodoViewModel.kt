@@ -36,6 +36,8 @@ class EditTodoViewModel @Inject constructor(
     val deadline = _deadline.asStateFlow()
     private val _showDatePickerEvent = Channel<Boolean>()
     val showDatePickerEvent = _showDatePickerEvent.receiveAsFlow()
+    private val _backEvent = Channel<Unit>()
+    val backEvent = _backEvent.receiveAsFlow()
 
     init {
         val savedId: String? = savedStateHandle[EDIT_ID_ARGS]
@@ -96,6 +98,7 @@ class EditTodoViewModel @Inject constructor(
                 }
             }
         }
+        onBack()
     }
 
     override fun delete() {
@@ -104,5 +107,10 @@ class EditTodoViewModel @Inject constructor(
                 id?.let { todoRepository.delete(id = it) }
             }
         }
+        onBack()
+    }
+
+    override fun onBack() {
+        _backEvent.trySend(Unit)
     }
 }

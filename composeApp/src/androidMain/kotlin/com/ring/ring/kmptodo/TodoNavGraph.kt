@@ -21,8 +21,8 @@ fun TodoNavGraph(navController: NavHostController) {
                 type = NavType.StringType
                 nullable = true
             })
-        ) { backStackEntry ->
-            EditTodoScreen()
+        ) {
+            EditTodoScreen(popBackStack = navController::popBackStack)
         }
     }
 }
@@ -35,6 +35,5 @@ sealed class Screen(val route: String) {
 
     companion object {
         const val EDIT_ID_ARGS = "id"
-
     }
 }
