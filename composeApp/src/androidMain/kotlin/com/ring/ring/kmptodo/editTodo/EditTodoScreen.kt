@@ -1,4 +1,4 @@
-package com.ring.ring.kmptodo.edit
+package com.ring.ring.kmptodo.editTodo
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

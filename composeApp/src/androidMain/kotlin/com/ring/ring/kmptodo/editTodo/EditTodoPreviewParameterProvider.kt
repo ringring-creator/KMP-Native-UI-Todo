@@ -1,4 +1,4 @@
-package com.ring.ring.kmptodo.edit
+package com.ring.ring.kmptodo.editTodo
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import kotlinx.coroutines.flow.flowOf

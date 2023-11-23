@@ -1,4 +1,4 @@
-package com.ring.ring.kmptodo.edit
+package com.ring.ring.kmptodo.editTodo
 
 import android.app.DatePickerDialog
 import android.widget.DatePicker

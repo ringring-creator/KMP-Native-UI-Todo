@@ -6,7 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.ring.ring.kmptodo.edit.EditTodoScreen
+import com.ring.ring.kmptodo.editTodo.EditTodoScreen
 import com.ring.ring.kmptodo.todos.TodosScreen
 
 @Composable
