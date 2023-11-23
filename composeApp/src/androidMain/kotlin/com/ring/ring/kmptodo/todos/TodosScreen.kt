@@ -22,7 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,16 +37,16 @@ data class TodosUiState(
     val todos: List<TodosItemUiState>
 )
 
-interface TodosStateUpdater {
-    fun setDone(id: Long, done: Boolean) {}
-}
-
 data class TodosItemUiState(
     val id: Long,
     val title: String,
     val done: Boolean,
     val deadline: String,
 )
+
+interface TodosStateUpdater {
+    fun setDone(id: Long, done: Boolean) {}
+}
 
 @Composable
 fun TodosScreen(
@@ -59,6 +59,12 @@ fun TodosScreen(
         stateUpdater = viewModel,
         onNavigateToEditTodo = onNavigateToEditTodo
     )
+
+    DisposableEffect(Unit) {
+        viewModel.refresh()
+
+        onDispose { }
+    }
 }
 
 @Composable
@@ -86,6 +92,7 @@ fun TodosScreen(
                 onClick = { onNavigateToEditTodo(null) },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
+                    .padding(16.dp)
             ) {
                 Icon(
                     Icons.Filled.Create,

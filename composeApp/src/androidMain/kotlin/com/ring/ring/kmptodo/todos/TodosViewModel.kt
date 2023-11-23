@@ -23,9 +23,13 @@ class TodosViewModel @Inject constructor(
     val todosUiState = _todosUiState.asStateFlow()
 
     init {
+        refresh()
+    }
+
+    fun refresh() {
         viewModelScope.launch {
             withContext(dispatcher) {
-                refresh()
+                updateTodoUiState()
             }
         }
     }
@@ -34,12 +38,12 @@ class TodosViewModel @Inject constructor(
         viewModelScope.launch {
             withContext(dispatcher) {
                 todoRepository.updateDone(id, done)
-                refresh()
+                updateTodoUiState()
             }
         }
     }
 
-    private suspend fun refresh() {
+    private suspend fun updateTodoUiState() {
         _todosUiState.update {
             TodosUiState(
                 todos = todoRepository.list().mapNotNull(Todo::toTodosItemUiState)
