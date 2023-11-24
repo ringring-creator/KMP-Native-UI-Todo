@@ -13,10 +13,6 @@ struct TodosItemUiState: Identifiable {
     let deadline: String
 }
 
-protocol TodosStateUpdater {
-    func setDone(id: Int64, done: Bool)
-}
-
 struct TodosScreen: View {
     @ObservedObject private(set) var viewModel: TodosViewModel
     
@@ -53,18 +49,20 @@ private struct TodosItem: View {
     private(set) var viewModel: TodosViewModel
     
     var body: some View{
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 5) {
-                Image(systemName: todo.done ? "checkmark.square" : "square")
-                    .onTapGesture {
-                        viewModel.setDone(id: todo.id ?? 0, done: !todo.done)
-                    }
-                Text(todo.title)
-            }
-            HStack(spacing: 5) {
-                Spacer()
-                Image(systemName: "calendar")
-                Text(todo.deadline)
+        NavigationLink(destination: EditTodoScreen(viewModel: EditTodoViewModel(), id: todo.id)) {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(spacing: 5) {
+                    Image(systemName: todo.done ? "checkmark.square" : "square")
+                        .onTapGesture {
+                            viewModel.setDone(id: todo.id ?? 0, done: !todo.done)
+                        }
+                    Text(todo.title)
+                }
+                HStack(spacing: 5) {
+                    Spacer()
+                    Image(systemName: "calendar")
+                    Text(todo.deadline)
+                }
             }
         }
     }
