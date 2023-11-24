@@ -18,29 +18,46 @@ protocol TodosStateUpdater {
 }
 
 struct TodosScreen: View {
-    @ObservedObject var viewModel: TodosViewModel
+    @ObservedObject private(set) var viewModel: TodosViewModel
     
     init(viewModel: TodosViewModel = TodosViewModel()) {
         self.viewModel = viewModel
     }
     
     var body: some View {
-        List(viewModel.uiState.todos) { todo in
-            TodosItem(todo: todo)
+        NavigationView {
+            ZStack(alignment: .bottomTrailing) {
+                List(viewModel.uiState.todos) { todo in
+                    NavigationLink(destination: EditTodoScreen(viewModel: EditTodoViewModel(), id: todo.id)) {
+                        TodosItem(todo: todo,viewModel: viewModel)
+                    }
+                }.frame(maxWidth: .infinity,maxHeight: .infinity)
+                NavigationLink(destination: EditTodoScreen(viewModel: EditTodoViewModel(), id: nil)) {
+                    Image(systemName: "plus")
+                        .resizable()
+                        .padding(12)
+                        .frame(width: 48, height: 48)
+                        .background(Color.green)
+                        .clipShape(Circle())
+                        .foregroundColor(.white)
+                        .padding(18)
+                }
+            }
+            .onAppear { self.viewModel.refresh() }
         }
-        .onAppear { self.viewModel.refresh() }
     }
 }
 
 private struct TodosItem: View {
-    @State var todo: TodosItemUiState
-
+    var todo: TodosItemUiState
+    private(set) var viewModel: TodosViewModel
+    
     var body: some View{
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 5) {
                 Image(systemName: todo.done ? "checkmark.square" : "square")
                     .onTapGesture {
-                        todo.done = !todo.done
+                        viewModel.setDone(id: todo.id ?? 0, done: !todo.done)
                     }
                 Text(todo.title)
             }
@@ -50,23 +67,5 @@ private struct TodosItem: View {
                 Text(todo.deadline)
             }
         }
-        .onTapGesture {
-            
-        }
-    }
-}
-
-struct TodosScreen_Previews: PreviewProvider {
-    static var previews: some View {
-        TodosScreen(
-            viewModel: TodosViewModel(
-                uiState:TodosUiState(
-                    todos: [
-                        TodosItemUiState(id: 1, title: "Todo 1", done: false, deadline: "2023-11-25"),
-                        TodosItemUiState(id: 2, title: "Todo 2", done: true, deadline: "2023-11-26")
-                    ]
-                                    )
-            )
-        )
     }
 }

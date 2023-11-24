@@ -6,10 +6,8 @@ class TodosViewModel: ObservableObject {
     private let todoRepository:TodoRepository
 
     init(
-        uiState: TodosUiState = TodosUiState(todos: []),
-        todoRepository:TodoRepository = DataModules.Factory().createTodoRepository()
+        todoRepository: TodoRepository = DataModules.Factory().createTodoRepository()
     ) {
-        self.uiState = uiState
         self.todoRepository = todoRepository
     }
     
@@ -24,6 +22,15 @@ class TodosViewModel: ObservableObject {
                 )
             } catch {
                 print("fail to todoRepository.list")
+            }
+        }
+    }
+    
+    func setDone(id: Int64, done: Bool) {
+        Task {
+            do {
+                try await todoRepository.updateDone(id: id, done: done)
+                refresh()
             }
         }
     }

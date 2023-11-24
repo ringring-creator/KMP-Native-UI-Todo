@@ -84,7 +84,7 @@ class EditTodoViewModel @Inject constructor(
     override fun save() {
         viewModelScope.launch {
             withContext(dispatcher) {
-                val id = todoRepository.save(
+                todoRepository.save(
                     Todo(
                         id = id,
                         title = _title.value,
@@ -93,9 +93,6 @@ class EditTodoViewModel @Inject constructor(
                         deadline = _deadline.value.toLocalDate(),
                     )
                 )
-                id?.let {
-                    this@EditTodoViewModel.id = it
-                }
             }
         }
         onBack()

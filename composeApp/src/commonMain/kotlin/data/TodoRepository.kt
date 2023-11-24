@@ -50,8 +50,12 @@ class TodoRepository(
         todoDataSource.get(id = id)
     }
 
-    suspend fun save(todo: Todo): Long? = withContext(Dispatchers.IO) {
-        todoDataSource.upsert(todo)
+    suspend fun save(todo: Todo) = withContext(Dispatchers.IO) {
+        try {
+            todoDataSource.upsert(todo)
+        } catch (e: Exception) {
+            println(e)
+        }
     }
 
     suspend fun updateDone(id: Long, done: Boolean) = withContext(Dispatchers.IO) {
