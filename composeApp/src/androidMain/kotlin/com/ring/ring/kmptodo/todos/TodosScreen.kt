@@ -45,10 +45,6 @@ data class TodosItemUiState(
     val deadline: String,
 )
 
-interface TodosStateUpdater {
-    fun setDone(id: Long, done: Boolean) {}
-}
-
 @Composable
 fun TodosScreen(
     viewModel: TodosViewModel = hiltViewModel(),
@@ -58,7 +54,7 @@ fun TodosScreen(
 
     TodosScreen(
         uiState = todosUiState,
-        stateUpdater = viewModel,
+        setDone = viewModel::setDone,
         onNavigateToEditTodo = onNavigateToEditTodo
     )
 
@@ -72,7 +68,7 @@ fun TodosScreen(
 @Composable
 fun TodosScreen(
     uiState: TodosUiState,
-    stateUpdater: TodosStateUpdater,
+    setDone: (id: Long, done: Boolean) -> Unit,
     onNavigateToEditTodo: (Long?) -> Unit,
 ) {
     Scaffold(
@@ -88,7 +84,7 @@ fun TodosScreen(
             TodosContent(
                 todos = uiState.todos,
                 onNavigateToEditTodo = onNavigateToEditTodo,
-                setDone = stateUpdater::setDone,
+                setDone = setDone,
             )
             FloatingActionButton(
                 onClick = { onNavigateToEditTodo(null) },
@@ -175,6 +171,6 @@ fun TodosScreenPreview(
 ) {
     TodosScreen(
         uiState = uiState,
-        stateUpdater = object : TodosStateUpdater {}
+        setDone = { _, _ -> }
     ) {}
 }

@@ -18,7 +18,7 @@ import javax.inject.Inject
 class TodosViewModel @Inject constructor(
     private val todoRepository: TodoRepository,
     @IoDispatcher private val dispatcher: CoroutineDispatcher,
-) : ViewModel(), TodosStateUpdater {
+) : ViewModel() {
     private val _todosUiState = MutableStateFlow(TodosUiState(todos = emptyList()))
     val todosUiState = _todosUiState.asStateFlow()
 
@@ -34,7 +34,7 @@ class TodosViewModel @Inject constructor(
         }
     }
 
-    override fun setDone(id: Long, done: Boolean) {
+    fun setDone(id: Long, done: Boolean) {
         viewModelScope.launch {
             withContext(dispatcher) {
                 todoRepository.updateDone(id, done)
