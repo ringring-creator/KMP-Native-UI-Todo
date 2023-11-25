@@ -39,7 +39,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.sqlDelight.common)
-
+            implementation(libs.multiplatformSettings.common)
         }
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)

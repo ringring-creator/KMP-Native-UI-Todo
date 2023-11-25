@@ -24,6 +24,7 @@ sqlDelight = "2.0.0"
 hilt = "2.46"
 androidxHiltNavigationCompose = "1.1.0"
 skie = "0.5.3"
+multiplatformSettings = "1.1.1"
 
 [libraries]
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
@@ -53,6 +54,7 @@ sqlDelight-ios = { module = "app.cash.sqldelight:native-driver", version.ref = "
 hilt-android-core = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
+multiplatformSettings-common = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "multiplatformSettings" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }

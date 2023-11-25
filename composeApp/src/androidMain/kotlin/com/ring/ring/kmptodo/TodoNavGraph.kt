@@ -10,10 +10,16 @@ import com.ring.ring.kmptodo.editTodo.EditTodoScreen
 import com.ring.ring.kmptodo.todos.TodosScreen
 
 @Composable
-fun TodoNavGraph(navController: NavHostController) {
+fun TodoNavGraph(navController: NavHostController, mainViewModel: MainViewModel) {
     NavHost(navController = navController, startDestination = Screen.Todos.route) {
         composable(Screen.Todos.route) {
-            TodosScreen { navController.navigate(Screen.EditTodo.createRoute(it)) }
+            TodosScreen(mainViewModel = mainViewModel) {
+                navController.navigate(
+                    Screen.EditTodo.createRoute(
+                        it
+                    )
+                )
+            }
         }
         composable(
             Screen.EditTodo.route,

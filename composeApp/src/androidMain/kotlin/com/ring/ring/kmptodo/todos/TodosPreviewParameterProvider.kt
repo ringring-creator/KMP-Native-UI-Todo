@@ -8,7 +8,7 @@ class TodosPreviewParameterProvider : PreviewParameterProvider<TodosUiState> {
             TodosItemUiState(0L, "implement UI", false, "2023-04-01"),
             TodosItemUiState(1L, "implement ViewModel. ".repeat(5), true, "2023-05-01"),
             TodosItemUiState(2L, "implement Repository", false, "2023-12-01"),
-        )
+        ),
     )
 
     override val values: Sequence<TodosUiState>

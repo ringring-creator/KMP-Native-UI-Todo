@@ -19,7 +19,9 @@ class TodosViewModel @Inject constructor(
     private val todoRepository: TodoRepository,
     @IoDispatcher private val dispatcher: CoroutineDispatcher,
 ) : ViewModel() {
-    private val _todosUiState = MutableStateFlow(TodosUiState(todos = emptyList()))
+    private val _todosUiState = MutableStateFlow(
+        TodosUiState(todos = emptyList())
+    )
     val todosUiState = _todosUiState.asStateFlow()
 
     init {
@@ -46,7 +48,7 @@ class TodosViewModel @Inject constructor(
     private suspend fun updateTodoUiState() {
         _todosUiState.update {
             TodosUiState(
-                todos = todoRepository.list().mapNotNull(Todo::toTodosItemUiState)
+                todos = todoRepository.list().mapNotNull(Todo::toTodosItemUiState),
             )
         }
     }

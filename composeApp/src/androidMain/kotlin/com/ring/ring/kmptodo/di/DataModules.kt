@@ -8,6 +8,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import data.ScreenSettingsRepository
 import data.TodoRepository
 import data.local.db.LocalDb
 import javax.inject.Singleton
@@ -24,4 +25,9 @@ object DataModules {
     @Provides
     fun provideTodoRepository(sqlDriver: SqlDriver): TodoRepository =
         TodoRepository(sqlDriver)
+
+    @Singleton
+    @Provides
+    fun provideScreenSettingsRepository(): ScreenSettingsRepository =
+        ScreenSettingsRepository()
 }
