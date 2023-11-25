@@ -3,12 +3,16 @@ import ComposeApp
 
 class TodosViewModel: ObservableObject {
     @Published var uiState = TodosUiState(todos: [])
+    @Published private(set) var isDarkMode: Bool = false
     private let todoRepository:TodoRepository
+    private let screenSettingsRepository: ScreenSettingsRepository
 
     init(
-        todoRepository: TodoRepository = DataModules.Factory().createTodoRepository()
+        todoRepository: TodoRepository = DataModules.Factory().createTodoRepository(),
+        screenSettingsRepository: ScreenSettingsRepository = DataModules.Factory().createScreenSettingsRepository()
     ) {
         self.todoRepository = todoRepository
+        self.screenSettingsRepository = screenSettingsRepository
     }
     
     func refresh() {
@@ -33,5 +37,16 @@ class TodosViewModel: ObservableObject {
                 refresh()
             }
         }
+    }
+    
+    func toggleDarkMode() {
+        screenSettingsRepository.set(
+            screenSettings: ScreenSettings(isDarkMode: !isDarkMode)
+        )
+        updateIsDarkMode()
+    }
+    
+    private func updateIsDarkMode() {
+        isDarkMode = screenSettingsRepository.get().isDarkMode
     }
 }

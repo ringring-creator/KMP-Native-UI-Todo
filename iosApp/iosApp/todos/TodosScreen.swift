@@ -39,8 +39,19 @@ struct TodosScreen: View {
                         .padding(18)
                 }
             }
+            .navigationBarTitle("Todos", displayMode: .inline)
+            .navigationBarItems(trailing:
+                                    Button(action: {
+                viewModel.toggleDarkMode()
+            }) {
+                Image(systemName: "moon")
+                    .imageScale(.large)
+                    .foregroundColor(self.viewModel.isDarkMode ? .white : .black)
+            }
+            )
             .onAppear { self.viewModel.refresh() }
         }
+        .preferredColorScheme(self.viewModel.isDarkMode ? .dark : .light)
     }
 }
 
