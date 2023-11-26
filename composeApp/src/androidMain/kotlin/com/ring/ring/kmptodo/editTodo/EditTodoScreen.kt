@@ -124,6 +124,30 @@ fun EditTodoScreen(
                     )
                 }
             )
+        },
+        floatingActionButton = {
+            Column {
+                FloatingActionButton(
+                    onClick = stateUpdater::save,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(
+                        Icons.Filled.Create,
+                        contentDescription = "create",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                FloatingActionButton(
+                    onClick = stateUpdater::delete,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(
+                        Icons.Filled.Delete,
+                        contentDescription = "delete",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
         }
     ) {
         EditTodoContent(
@@ -179,32 +203,6 @@ fun EditTodoContent(
                     modifier = Modifier.size(24.dp)
                 )
                 Text(uiState.deadline.toString())
-            }
-        }
-        Row(
-            Modifier
-                .padding(16.dp)
-                .align(Alignment.BottomEnd)
-        ) {
-            FloatingActionButton(
-                onClick = stateUpdater::save,
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Icon(
-                    Icons.Filled.Create,
-                    contentDescription = "create",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-            FloatingActionButton(
-                onClick = stateUpdater::delete,
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Icon(
-                    Icons.Filled.Delete,
-                    contentDescription = "delete",
-                    modifier = Modifier.size(24.dp)
-                )
             }
         }
         DeadlineDatePicker(

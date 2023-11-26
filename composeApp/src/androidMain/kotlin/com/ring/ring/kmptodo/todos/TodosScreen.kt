@@ -1,7 +1,6 @@
 package com.ring.ring.kmptodo.todos
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -95,24 +94,9 @@ fun TodosScreen(
                     }
                 }
             )
-        }
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
-            TodosContent(
-                todos = uiState.todos,
-                onNavigateToEditTodo = onNavigateToEditTodo,
-                setDone = setDone,
-            )
-            FloatingActionButton(
-                onClick = { onNavigateToEditTodo(null) },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-            ) {
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = { onNavigateToEditTodo(null) }) {
                 Icon(
                     Icons.Filled.Create,
                     contentDescription = "create",
@@ -120,6 +104,15 @@ fun TodosScreen(
                 )
             }
         }
+    ) {
+        TodosContent(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
+            todos = uiState.todos,
+            onNavigateToEditTodo = onNavigateToEditTodo,
+            setDone = setDone,
+        )
     }
 }
 
