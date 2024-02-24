@@ -34,8 +34,11 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
 import com.ring.ring.kmptodo.MainViewModel
 import com.ring.ring.kmptodo.R
+import com.ring.ring.kmptodo.todos.TodosScreenNav.ROUTE
 
 data class TodosUiState(
     val todos: List<TodosItemUiState>,
@@ -47,6 +50,22 @@ data class TodosItemUiState(
     val done: Boolean,
     val deadline: String,
 )
+
+object TodosScreenNav {
+    const val ROUTE = "todos"
+}
+
+fun NavGraphBuilder.todosScreen(
+    mainViewModel: MainViewModel,
+    onNavigateToEditTodo: (Long?) -> Unit
+) {
+    composable(ROUTE) {
+        TodosScreen(
+            mainViewModel = mainViewModel,
+            onNavigateToEditTodo = onNavigateToEditTodo
+        )
+    }
+}
 
 @Composable
 fun TodosScreen(

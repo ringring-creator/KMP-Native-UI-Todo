@@ -3,7 +3,6 @@ package com.ring.ring.kmptodo.editTodo
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ring.ring.kmptodo.Screen.Companion.EDIT_ID_ARGS
 import com.ring.ring.kmptodo.di.IoDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
 import data.Todo
@@ -40,7 +39,7 @@ class EditTodoViewModel @Inject constructor(
     val backEvent = _backEvent.receiveAsFlow()
 
     init {
-        val savedId: String? = savedStateHandle[EDIT_ID_ARGS]
+        val savedId: String? = savedStateHandle[EditTodoScreenNav.ID]
         id = savedId?.toLongOrNull()
         viewModelScope.launch {
             withContext(dispatcher) {

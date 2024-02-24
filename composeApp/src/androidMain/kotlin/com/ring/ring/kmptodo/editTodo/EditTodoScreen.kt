@@ -30,6 +30,10 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.ring.ring.kmptodo.R
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
@@ -94,6 +98,30 @@ fun rememberEditTodoUiState(
         viewModel.showDatePickerEvent,
     )
 }
+
+class EditTodoScreenNav {
+    val route = "todo/{${ID}}"
+
+    companion object {
+        const val ID = "id"
+        fun createRoute(id: Long?) = "todo/$id"
+    }
+}
+
+fun NavGraphBuilder.editTodoScreen(
+    popBackStack: () -> Boolean,
+) {
+    composable(
+        EditTodoScreenNav().route,
+        arguments = listOf(navArgument("id") {
+            type = NavType.StringType
+            nullable = true
+        })
+    ) {
+        EditTodoScreen(popBackStack = popBackStack)
+    }
+}
+
 
 @Composable
 fun EditTodoScreen(
