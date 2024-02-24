@@ -70,7 +70,7 @@ fun NavGraphBuilder.todosScreen(
 @Composable
 fun TodosScreen(
     viewModel: TodosViewModel = hiltViewModel(),
-    mainViewModel: MainViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel,
     onNavigateToEditTodo: (Long?) -> Unit
 ) {
     val todosUiState by viewModel.todosUiState.collectAsStateWithLifecycle()
@@ -101,27 +101,10 @@ fun TodosScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(id = R.string.todos_screen_title)) },
-                actions = {
-                    IconToggleButton(checked = isDarkMode, onCheckedChange = setDarkMode) {
-                        Icon(
-                            painterResource(id = R.drawable.baseline_dark_mode_24),
-                            contentDescription = null,
-                            tint = if (isDarkMode) Color.Black else Color.White
-                        )
-                    }
-                }
-            )
+            TodosTopBar(isDarkMode, setDarkMode)
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { onNavigateToEditTodo(null) }) {
-                Icon(
-                    Icons.Filled.Create,
-                    contentDescription = "create",
-                    modifier = Modifier.size(24.dp)
-                )
-            }
+            TodosFloatingButton(onNavigateToEditTodo)
         }
     ) {
         TodosContent(
@@ -131,6 +114,36 @@ fun TodosScreen(
             todos = uiState.todos,
             onNavigateToEditTodo = onNavigateToEditTodo,
             setDone = setDone,
+        )
+    }
+}
+
+@Composable
+private fun TodosTopBar(
+    isDarkMode: Boolean,
+    setDarkMode: (done: Boolean) -> Unit
+) {
+    TopAppBar(
+        title = { Text(stringResource(id = R.string.todos_screen_title)) },
+        actions = {
+            IconToggleButton(checked = isDarkMode, onCheckedChange = setDarkMode) {
+                Icon(
+                    painterResource(id = R.drawable.baseline_dark_mode_24),
+                    contentDescription = null,
+                    tint = if (isDarkMode) Color.Black else Color.White
+                )
+            }
+        }
+    )
+}
+
+@Composable
+private fun TodosFloatingButton(onNavigateToEditTodo: (Long?) -> Unit) {
+    FloatingActionButton(onClick = { onNavigateToEditTodo(null) }) {
+        Icon(
+            Icons.Filled.Create,
+            contentDescription = "create",
+            modifier = Modifier.size(24.dp)
         )
     }
 }
@@ -152,7 +165,7 @@ private fun TodosContent(
 }
 
 @Composable
-fun TodosItem(
+private fun TodosItem(
     item: TodosItemUiState,
     onNavigateToEditTodo: (Long?) -> Unit,
     setDone: (done: Boolean) -> Unit,

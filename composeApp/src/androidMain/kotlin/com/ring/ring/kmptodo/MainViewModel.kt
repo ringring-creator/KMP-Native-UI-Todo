@@ -6,7 +6,6 @@ import data.ScreenSettings
 import data.ScreenSettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,11 +20,16 @@ class MainViewModel @Inject constructor(
     }
 
     fun setDarkMode(isDarkMode: Boolean) {
-        screenSettingsRepository.set(ScreenSettings(isDarkMode))
+        saveScreenSettings(isDarkMode)
         updateIsDarkMode()
     }
 
     private fun updateIsDarkMode() {
-        _isDarkMode.update { screenSettingsRepository.get().isDarkMode }
+        _isDarkMode.value = screenSettingsRepository.get().isDarkMode
+    }
+
+    private fun saveScreenSettings(isDarkMode: Boolean) {
+        val screenSettings = ScreenSettings(isDarkMode)
+        screenSettingsRepository.set(screenSettings)
     }
 }

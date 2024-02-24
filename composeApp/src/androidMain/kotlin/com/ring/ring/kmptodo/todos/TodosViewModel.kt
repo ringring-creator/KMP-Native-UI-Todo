@@ -9,7 +9,6 @@ import data.TodoRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -46,10 +45,8 @@ class TodosViewModel @Inject constructor(
     }
 
     private suspend fun updateTodoUiState() {
-        _todosUiState.update {
-            TodosUiState(
-                todos = todoRepository.list().mapNotNull(Todo::toTodosItemUiState),
-            )
-        }
+        _todosUiState.value = TodosUiState(
+            todos = todoRepository.list().mapNotNull(Todo::toTodosItemUiState),
+        )
     }
 }
