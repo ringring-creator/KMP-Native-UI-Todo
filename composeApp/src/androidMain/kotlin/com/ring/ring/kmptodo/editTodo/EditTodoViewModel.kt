@@ -12,7 +12,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -45,35 +44,33 @@ class EditTodoViewModel @Inject constructor(
             withContext(dispatcher) {
                 id?.let {
                     val todo = todoRepository.get(it)
-                    _title.update { todo.title }
-                    _description.update { todo.description }
-                    _done.update { todo.done }
-                    _deadline.update { todo.deadline.toDeadline() }
+                    _title.value = todo.title
+                    _description.value = todo.description
+                    _done.value = todo.done
+                    _deadline.value = todo.deadline.toDeadline()
                 }
             }
         }
     }
 
     override fun setTitle(title: String) {
-        _title.update { title }
+        _title.value = title
     }
 
     override fun setDescription(description: String) {
-        _description.update { description }
+        _description.value = description
     }
 
     override fun setDone(done: Boolean) {
-        _done.update { done }
+        _done.value = done
     }
 
     override fun setDeadline(year: Int, month: Int, day: Int) {
-        _deadline.update {
-            EditTodoUiState.Deadline(
-                year = year,
-                month = month,
-                day = day,
-            )
-        }
+        _deadline.value = EditTodoUiState.Deadline(
+            year = year,
+            month = month,
+            day = day,
+        )
     }
 
     override fun showDatePicker() {

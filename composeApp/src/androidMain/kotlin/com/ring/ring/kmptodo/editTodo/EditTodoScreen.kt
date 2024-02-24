@@ -142,40 +142,10 @@ fun EditTodoScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(id = R.string.edit_todo_screen_title)) },
-                navigationIcon = {
-                    Icon(
-                        Icons.Filled.ArrowBack,
-                        contentDescription = null,
-                        modifier = Modifier.clickable { stateUpdater.onBack() }
-                    )
-                }
-            )
+            EditTodoTopBar(stateUpdater)
         },
         floatingActionButton = {
-            Column {
-                FloatingActionButton(
-                    onClick = stateUpdater::save,
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    Icon(
-                        Icons.Filled.Create,
-                        contentDescription = "create",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-                FloatingActionButton(
-                    onClick = stateUpdater::delete,
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    Icon(
-                        Icons.Filled.Delete,
-                        contentDescription = "delete",
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
+            EditTodoFloatingButtons(stateUpdater)
         }
     ) {
         EditTodoContent(
@@ -189,7 +159,47 @@ fun EditTodoScreen(
 }
 
 @Composable
-fun EditTodoContent(
+private fun EditTodoTopBar(stateUpdater: EditTodoStateUpdater) {
+    TopAppBar(
+        title = { Text(stringResource(id = R.string.edit_todo_screen_title)) },
+        navigationIcon = {
+            Icon(
+                Icons.Filled.ArrowBack,
+                contentDescription = null,
+                modifier = Modifier.clickable { stateUpdater.onBack() }
+            )
+        }
+    )
+}
+
+@Composable
+private fun EditTodoFloatingButtons(stateUpdater: EditTodoStateUpdater) {
+    Column {
+        FloatingActionButton(
+            onClick = stateUpdater::save,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Icon(
+                Icons.Filled.Create,
+                contentDescription = "create",
+                modifier = Modifier.size(24.dp)
+            )
+        }
+        FloatingActionButton(
+            onClick = stateUpdater::delete,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Icon(
+                Icons.Filled.Delete,
+                contentDescription = "delete",
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun EditTodoContent(
     modifier: Modifier,
     uiState: EditTodoUiState,
     stateUpdater: EditTodoStateUpdater,
