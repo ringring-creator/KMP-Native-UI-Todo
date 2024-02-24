@@ -19,11 +19,14 @@ class TodosViewModel: ObservableObject {
         Task {
             do {
                 let todos = try await todoRepository.list()
-                uiState = TodosUiState(
+                let uiState = TodosUiState(
                     todos: todos.map { todo in
                         todo.toTodosItemUiState()
                     }
                 )
+                DispatchQueue.main.async {
+                    self.uiState = uiState
+                }
             } catch {
                 print("fail to todoRepository.list")
             }
@@ -47,6 +50,9 @@ class TodosViewModel: ObservableObject {
     }
     
     private func updateIsDarkMode() {
-        isDarkMode = screenSettingsRepository.get().isDarkMode
+        let isDarkMode = self.screenSettingsRepository.get().isDarkMode
+        DispatchQueue.main.async {
+            self.isDarkMode = isDarkMode
+        }
     }
 }
