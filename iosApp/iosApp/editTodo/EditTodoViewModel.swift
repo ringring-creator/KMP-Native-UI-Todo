@@ -1,6 +1,6 @@
 import Foundation
 import ComposeApp
-
+import Combine
 
 @MainActor
 class EditTodoViewModel: ObservableObject {
@@ -9,6 +9,8 @@ class EditTodoViewModel: ObservableObject {
     @Published var description: String = ""
     @Published var done: Bool = false
     @Published var deadline: Date = Date()
+    
+    let dismissEvent = PassthroughSubject<Void, Never>()
 
     private let todoRepository: TodoRepository
 
@@ -47,6 +49,7 @@ class EditTodoViewModel: ObservableObject {
                         deadline: deadline.toLocalDate()
                     )
                 )
+                dismissEvent.send()
             } catch {
                 print("fail to todoRepository.save")
             }
@@ -62,6 +65,7 @@ class EditTodoViewModel: ObservableObject {
                     print("fail to todoRepository.delete")
                 }
             }
+            dismissEvent.send()
         }
     }
 }

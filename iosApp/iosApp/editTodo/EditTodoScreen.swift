@@ -1,11 +1,13 @@
 import Foundation
 import ComposeApp
 import SwiftUI
+import Combine
 
 struct EditTodoScreen: View {
     @ObservedObject private(set) var viewModel: EditTodoViewModel
     @Environment(\.presentationMode) var presentationMode
     private let id:Int64?
+    @State private var cancellables: Set<AnyCancellable> = Set<AnyCancellable>()
     
     init(viewModel: EditTodoViewModel, id: Int64?) {
         self.viewModel = viewModel
@@ -50,7 +52,6 @@ struct EditTodoScreen: View {
                     .foregroundColor(.white)
                     .onTapGesture(perform: {
                         viewModel.save()
-                        presentationMode.wrappedValue.dismiss()
                     })
                 Image(systemName: "trash")
                     .resizable()
@@ -61,7 +62,6 @@ struct EditTodoScreen: View {
                     .foregroundColor(.white)
                     .onTapGesture(perform: {
                         viewModel.delete()
-                        presentationMode.wrappedValue.dismiss()
                     })
             }
             .padding(16)
@@ -70,6 +70,12 @@ struct EditTodoScreen: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
             viewModel.loadTodo(id: id)
+            viewModel.dismissEvent.sink {
+                presentationMode.wrappedValue.dismiss()
+            }.store(in: &cancellables)
+        }
+        .onDisappear {
+            cancellables.forEach{ $0.cancel() }
         }
     }
 }
