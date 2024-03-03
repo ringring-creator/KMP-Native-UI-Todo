@@ -130,7 +130,7 @@ private fun TodosTopBar(
                 Icon(
                     painterResource(id = R.drawable.baseline_dark_mode_24),
                     contentDescription = null,
-                    tint = if (isDarkMode) Color.Black else Color.White
+                    tint = if (isDarkMode) Color.Gray else Color.White
                 )
             }
         }

@@ -1,4 +1,4 @@
-rootProject.name = "KMP-Todo"
+rootProject.name = "KMP-Native-UI-Todo"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
